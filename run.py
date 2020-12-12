@@ -29,13 +29,13 @@ def main(targets):
         t0 = json.load(open('config/rm3.json'))
         print("In " + t0["rm"] + " given " + str(t0["n_occupants"]) + " occupants " + t0["activity"] + " and " + t0["expiratory_activity"]
              + " for " + str(t0["time"]) + " hours: ")
-        print()
         calculator.infection_risk(t0["time"], t0["rm"], t0["n_occupants"], t0["activity"], t0["expiratory_activity"], paths + "/data/raw/rm.csv")
+        print()
         t0 = json.load(open('config/rm4.json'))
         print("In " + t0["rm"] + " given " + str(t0["n_occupants"]) + " occupants " + t0["activity"] + " and " + t0["expiratory_activity"]
              + " for " + str(t0["time"]) + " hours: ")
-        print()
         calculator.infection_risk(t0["time"], t0["rm"], t0["n_occupants"], t0["activity"], t0["expiratory_activity"], paths + "/data/raw/rm.csv")
+        print()
         t0 = json.load(open('config/rm5.json'))
         print("In " + t0["rm"] + " given " + str(t0["n_occupants"]) + " occupants " + t0["activity"] + " and " + t0["expiratory_activity"]
              + " for " + str(t0["time"]) + " hours: ")
