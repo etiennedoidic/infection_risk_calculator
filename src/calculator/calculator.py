@@ -61,6 +61,9 @@ def get_air_changes_per_hour(cfm, room_volume):
         #impute unknown cfm with arbitrary cfm
         print('VAV unknown. Imputed with arbitrary VAV of 800 CFM')
         cfm = 800
+    elif cfm == 0:
+        #Natural ACH of .15 if CFM is off provided
+        return .15
     return (cfm * 60) / room_volume
 
 def get_room_data(filepath, room_id):
@@ -106,12 +109,15 @@ def get_quanta_emmission_rate(activity, expiratory_activity, var = var):
     return var['cv'] * var['ci'] * (var['IR'][activity] * CUBIC_M_TO_ML) * summation
       
 #Infection Risk Calculator
-def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, room_data_path, var = var, cfm = False):
+def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, room_data_path, var = var, cfm = True):
+    #CFM can be boolean or number within range of cfm_range
     CUBIC_μM_TO_CUBIC_CM = 1e-12
     ERq = get_quanta_emmission_rate(activity, expiratory_activity)
     room_dic = get_room_data(room_data_path, room_id)
     cfm_range = room_dic['cfm_range']
     if cfm == False:
+        cfm = 0
+    elif cfm == True:
         cfm = min(cfm_range)
     elif (cfm > max(cfm_range)) | ((cfm < min(cfm_range))):
         print('User input error: CFM out of CFM range. Minimum CFM chosen instead.')
