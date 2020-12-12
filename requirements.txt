@@ -1,1 +1,11 @@
-
+Python 3  
+sys  
+os  
+random  
+numpy  
+matplotlib.pyplot  
+scipy.stats  
+scipy.stats  
+json  
+IPython.display  
+pandas  
