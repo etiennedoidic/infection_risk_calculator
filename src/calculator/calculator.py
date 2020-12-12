@@ -69,21 +69,48 @@ def calculate_risk(t, IR = inhalation_rate[activity]):
 
 #Calculate maximum people allowed in the room given an exposure time (hours)
 #steady state model
-def calc_n_max_ss(exp_time): #exp time in hrs
-  
+def calc_n_max_ss(exp_time, relative_humidity, max_aerol_radius,max_viral_deact_rate, room_vol, air_exch_rate, mean_ceiling_height_m, ERq): #exp time in hrs
+    eff_aerosol_radius = ((0.4 / (1 - relative_humidity)) ** (1 / 3)) * max_aerosol_radius
+    sett_speed_mm = 3 * (eff_aerosol_radius / 5) ** 2 #mm/s
+    sett_speed = sett_speed_mm * 60 * 60 / 1000  # m/hr
+    viral_deact_rate = 0.3 * relative_humidity
+    fresh_rate = room_vol * air_exch_rate / 60
+    recirc_rate = fresh_rate * (1/0.5 - 1)
+    exhaled_air_inf = ERq * 5
+    air_filt_rate = aerosol_filtration_eff[1] * recirc_rate * 60 / room_vol #have to specify which filtration we have
+    conc_relax_rate = air_exch_rate + air_filt_rate + viral_deact_rate + sett_speed / mean_ceiling_height_m
+    airb_trans_rate = ((0.5 * mask_passage_prob[1]) ** 2) * exhaled_air_inf / (room_vol_m * conc_relax_rate)
     n_max = 1 + 0.1 / (airb_trans_rate * exp_time)
     return n_max
 
 #transient model
-def calc_n_max_t(exp_time): #exp time in hrs
-    risk_tolerance = risk_tolerance 
+def calc_n_max_t(exp_time, relative_humidity, max_aerol_radius,max_viral_deact_rate, room_vol, air_exch_rate, mean_ceiling_height_m, ERq): #exp time in hrs
+    eff_aerosol_radius = ((0.4 / (1 - relative_humidity)) ** (1 / 3)) * max_aerosol_radius
+    sett_speed_mm = 3 * (eff_aerosol_radius / 5) ** 2 #mm/s
+    sett_speed = sett_speed_mm * 60 * 60 / 1000  # m/hr
+    viral_deact_rate = 0.3 * relative_humidity
+    fresh_rate = room_vol * air_exch_rate / 60
+    recirc_rate = fresh_rate * (1/0.5 - 1)
+    exhaled_air_inf = ERq * 5
+    air_filt_rate = aerosol_filtration_eff[1] * recirc_rate * 60 / room_vol #have to specify which filtration we have
+    conc_relax_rate = air_exch_rate + air_filt_rate + viral_deact_rate + sett_speed / mean_ceiling_height_m
+    airb_trans_rate = ((0.5 * mask_passage_prob[1]) ** 2) * exhaled_air_inf / (room_vol_m * conc_relax_rate)
     n_max = 1 + (0.1 * (1 + 1/(conc_relax_rate * exp_time)) / (airb_trans_rate * exp_time))
     return n_max
 
 #Calculate maximum exposure time allowed given a capacity (# people):
-def calc_max_time(n_max):
+def calc_max_time(n_max, relative_humidity, max_aerol_radius,max_viral_deact_rate, room_vol, air_exch_rate, mean_ceiling_height_m, ERq):
     #risk_tolerance = risk_tolerance
-
+    eff_aerosol_radius = ((0.4 / (1 - relative_humidity)) ** (1 / 3)) * max_aerosol_radius
+    sett_speed_mm = 3 * (eff_aerosol_radius / 5) ** 2 #mm/s
+    sett_speed = sett_speed_mm * 60 * 60 / 1000  # m/hr
+    viral_deact_rate = 0.3 * relative_humidity
+    fresh_rate = room_vol * air_exch_rate / 60
+    recirc_rate = fresh_rate * (1/0.5 - 1)
+    exhaled_air_inf = ERq * 5
+    air_filt_rate = aerosol_filtration_eff[1] * recirc_rate * 60 / room_vol #have to specify which filtration we have
+    conc_relax_rate = air_exch_rate + air_filt_rate + viral_deact_rate + sett_speed / mean_ceiling_height_m
+    airb_trans_rate = ((0.5 * mask_passage_prob[1]) ** 2) * exhaled_air_inf / (room_vol_m * conc_relax_rate)
     exp_time_ss = 0.1 / ((n_max - 1) * airb_trans_rate)  # hrs, steady-state
     exp_time_trans = exp_time_ss * (1 + (1 + 4 / (conc_relax_rate * exp_time_ss)) ** 0.5) / 2  # hrs, transient
     return exp_time_trans
