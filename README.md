@@ -12,7 +12,7 @@ To use run.py in command line, input python run.py [targets].
 
 We currently have the following targets available: 
 
-More information of those sample runs can be found in the calculator walkthrough notebooks mentioned above. 
+More information about those sample runs can be found in the calculator walkthrough notebooks mentioned above. 
 
 ### Responsibilities
 * Etienne Doidic built the structure and underlying logic of the calculator, and also the notebooks for walk through. 
