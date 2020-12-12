@@ -77,7 +77,7 @@ def calc_n_max_ss(exp_time, max_aerosol_radius, room_vol, air_exch_rate, mean_ce
     fresh_rate = room_vol * air_exch_rate / 60
     recirc_rate = fresh_rate * (1/0.5 - 1)
     exhaled_air_inf = ERq * 5
-    air_filt_rate = aerosol_filtration_eff[1] * recirc_rate * 60 / room_vol #have to specify which filtration we have
+    air_filt_rate = 0.1 * recirc_rate * 60 / room_vol #have to specify which filtration we have
     conc_relax_rate = air_exch_rate + air_filt_rate + viral_deact_rate + sett_speed / mean_ceiling_height_m
     airb_trans_rate = ((0.5 * mask) ** 2) * exhaled_air_inf / (room_vol_m * conc_relax_rate)
     n_max = 1 + 0.1 / (airb_trans_rate * exp_time)
@@ -92,7 +92,7 @@ def calc_n_max_t(exp_time, max_aerosol_radius, room_vol, air_exch_rate, mean_cei
     fresh_rate = room_vol * air_exch_rate / 60
     recirc_rate = fresh_rate * (1/0.5 - 1)
     exhaled_air_inf = ERq * 5
-    air_filt_rate = aerosol_filtration_eff[1] * recirc_rate * 60 / room_vol #have to specify which filtration we have
+    air_filt_rate = 0.1 * recirc_rate * 60 / room_vol #have to specify which filtration we have
     conc_relax_rate = air_exch_rate + air_filt_rate + viral_deact_rate + sett_speed / mean_ceiling_height_m
     airb_trans_rate = ((0.5 * mask) ** 2) * exhaled_air_inf / (room_vol_m * conc_relax_rate)
     n_max = 1 + (0.1 * (1 + 1/(conc_relax_rate * exp_time)) / (airb_trans_rate * exp_time))
@@ -108,7 +108,7 @@ def calc_max_time(n_max, max_aerosol_radius, room_vol, air_exch_rate, mean_ceili
     fresh_rate = room_vol * air_exch_rate / 60
     recirc_rate = fresh_rate * (1/0.5 - 1)
     exhaled_air_inf = ERq * 5
-    air_filt_rate = aerosol_filtration_eff[1] * recirc_rate * 60 / room_vol #have to specify which filtration we have
+    air_filt_rate = 0.1 * recirc_rate * 60 / room_vol #have to specify which filtration we have
     conc_relax_rate = air_exch_rate + air_filt_rate + viral_deact_rate + sett_speed / mean_ceiling_height_m
     airb_trans_rate = ((0.5 * mask) ** 2) * exhaled_air_inf / (room_vol_m * conc_relax_rate)
     exp_time_ss = 0.1 / ((n_max - 1) * airb_trans_rate)  # hrs, steady-state
