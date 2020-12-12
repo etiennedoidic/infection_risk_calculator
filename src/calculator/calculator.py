@@ -79,7 +79,7 @@ def calc_n_max_ss(exp_time, max_aerosol_radius, room_area, room_height,air_exch_
     viral_deact_rate = 0.3 * 0.4
     fresh_rate = room_vol * air_exch_rate / 60
     recirc_rate = fresh_rate * (1/0.5 - 1)
-    exhaled_air_inf = ERq * 5
+    exhaled_air_inf = ERq * 10
     air_filt_rate = 0.1 * recirc_rate * 60 / room_vol #have to specify which filtration we have
     conc_relax_rate = air_exch_rate + air_filt_rate + viral_deact_rate + sett_speed / mean_ceiling_height_m
     airb_trans_rate = ((0.5 * mask) ** 2) * exhaled_air_inf / (room_vol_m * conc_relax_rate)
@@ -97,7 +97,7 @@ def calc_n_max_t(exp_time, max_aerosol_radius, room_area,room_height, air_exch_r
     viral_deact_rate = 0.3 * 0.4
     fresh_rate = room_vol * air_exch_rate / 60
     recirc_rate = fresh_rate * (1/0.5 - 1)
-    exhaled_air_inf = ERq * 5
+    exhaled_air_inf = ERq * 10
     air_filt_rate = 0.1 * recirc_rate * 60 / room_vol #have to specify which filtration we have
     conc_relax_rate = air_exch_rate + air_filt_rate + viral_deact_rate + sett_speed / mean_ceiling_height_m
     airb_trans_rate = ((0.5 * mask) ** 2) * exhaled_air_inf / (room_vol_m * conc_relax_rate)
@@ -115,7 +115,7 @@ def calc_max_time(n_max, max_aerosol_radius, room_area,room_height, air_exch_rat
     viral_deact_rate = 0.3 * 0.4
     fresh_rate = room_vol * air_exch_rate / 60
     recirc_rate = fresh_rate * (1/0.5 - 1)
-    exhaled_air_inf = ERq * 5
+    exhaled_air_inf = ERq * 10
     air_filt_rate = 0.1 * recirc_rate * 60 / room_vol #have to specify which filtration we have
     conc_relax_rate = air_exch_rate + air_filt_rate + viral_deact_rate + sett_speed / mean_ceiling_height_m
     airb_trans_rate = ((0.5 * mask) ** 2) * exhaled_air_inf / (room_vol_m * conc_relax_rate)
