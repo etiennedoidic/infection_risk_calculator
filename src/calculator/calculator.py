@@ -1,5 +1,6 @@
 import random
 import numpy as np
+import sys, os
 
 
 
@@ -55,6 +56,11 @@ var = {
 #Used to generate values with normal distribution
 
 #Helper Functions
+def blockPrint():
+    sys.stdout = open(os.devnull, 'w')
+    
+def enablePrint():
+    sys.stdout = sys.__stdout__
 
 def get_air_changes_per_hour(cfm, room_volume):
     if str(cfm) == 'nan':
