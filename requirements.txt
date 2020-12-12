@@ -9,3 +9,4 @@ scipy.stats
 json  
 IPython.display  
 pandas  
+scipy.integrate

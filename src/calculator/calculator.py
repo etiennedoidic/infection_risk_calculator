@@ -1,10 +1,10 @@
 import random
 import numpy as np
-import matplotlib.pyplot as plt
-import scipy.stats as ss
-from scipy.stats import truncnorm
+
+
+
 import json
-from IPython.display import Image
+
 import pandas as pd
 from scipy.integrate import quad
 
@@ -106,7 +106,7 @@ def get_quanta_emmission_rate(activity, expiratory_activity, var = var):
     return var['cv'] * var['ci'] * (var['IR'][activity] * CUBIC_M_TO_ML) * summation
       
 #Infection Risk Calculator
-def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, var = var, room_data_path = "rm.csv", cfm = False):
+def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, room_data_path, var = var, cfm = False):
     CUBIC_μM_TO_CUBIC_CM = 1e-12
     ERq = get_quanta_emmission_rate(activity, expiratory_activity)
     room_dic = get_room_data(room_data_path, room_id)
@@ -141,7 +141,11 @@ def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, var =
     print('The resulting risk of infection is ' + str(risk * 100) +'%')
     print('It is predicted that ' + str(risk) + ' x ' + str(n_occupants) + ' = ' + str(risk * n_occupants) + ' susceptible occupants will be infected')
     
+    
     return risk
+
+
+
 
 #Calculate maximum people allowed in the room given an exposure time (hours)
 #steady state model
