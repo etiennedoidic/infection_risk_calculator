@@ -2,6 +2,6 @@
 "rm": "CENTER 101", 
 "time": 2, 
 "n_occupants": 50, 
-"activity": "resting", 
-"expiratory_activity": "speaking"
+"activity": "heavy_exercise", 
+"expiratory_activity": "singing"
 }
