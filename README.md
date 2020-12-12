@@ -12,6 +12,10 @@ To use run.py in command line, input python run.py [targets].
 
 We currently have the following targets available: 
 
+
+
+* test: which runs the calculator using sample parameters. 
+
 More information about those sample runs can be found in the calculator walkthrough notebooks mentioned above. 
 
 ### Responsibilities
