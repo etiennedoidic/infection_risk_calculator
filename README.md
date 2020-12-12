@@ -6,9 +6,12 @@ In this project, We propose an infection risk algorithm which accepts building d
 
 ## Opening up the project
 The source codes for the calculator are located in /src/calculator. 
-To see the notebook containing the underlying logic and sample runnings for the calculator, open calculator_walkthrough in /notebooks. 
+To see the notebook containing the underlying logic and sample runnings for the calculator, open calculator_walkthrough in /notebooks. Note there are actual codes in the notebook, because the purpose of this project is to create an infection estimation algorithm that's clear to users and easily understanable by users. It's important to show what the algorithm does for each steps. 
+
 To use run.py in command line, input python run.py [targets]. 
+
 We currently have the following targets available: 
+
 More information of those sample runs can be found in the calculator walkthrough notebooks mentioned above. 
 
 ### Responsibilities
