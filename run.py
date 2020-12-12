@@ -30,8 +30,21 @@ def main(targets):
         print("In " + t0["rm"] + " given " + str(t0["n_occupants"]) + " occupants " + t0["activity"] + " and " + t0["expiratory_activity"]
              + " for " + str(t0["time"]) + " hours: ")
         calculator.infection_risk(t0["time"], t0["rm"], t0["n_occupants"], t0["activity"], t0["expiratory_activity"], paths + "/data/raw/rm.csv")
+        t0 = json.load(open('config/rm4.json'))
+        print("In " + t0["rm"] + " given " + str(t0["n_occupants"]) + " occupants " + t0["activity"] + " and " + t0["expiratory_activity"]
+             + " for " + str(t0["time"]) + " hours: ")
+        calculator.infection_risk(t0["time"], t0["rm"], t0["n_occupants"], t0["activity"], t0["expiratory_activity"], paths + "/data/raw/rm.csv")
+        t0 = json.load(open('config/rm5.json'))
+        print("In " + t0["rm"] + " given " + str(t0["n_occupants"]) + " occupants " + t0["activity"] + " and " + t0["expiratory_activity"]
+             + " for " + str(t0["time"]) + " hours: ")
+        calculator.infection_risk(t0["time"], t0["rm"], t0["n_occupants"], t0["activity"], t0["expiratory_activity"], paths + "/data/raw/rm.csv")
 if __name__ == '__main__':
     
     targets = sys.argv[1:]
     
     main(targets)
+
+    
+    
+    
+    
