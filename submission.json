@@ -1,4 +1,4 @@
 {
-    "dockerhub-id": "<user>/<image>:<tag>",
-    "repository-id": "https://github.com/<user>/<repo>.git"
+    "dockerhub-id": "hinanawits/docker",
+    "repository-id": "https://github.com/etiennedoidic/infection_risk_calculator"
 }
