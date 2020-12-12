@@ -1,13 +1,14 @@
 import sys
 import os
 import pandas as pd
+
 import json
 
 import matplotlib.pyplot as plt
-from calculator import calculator
+
 paths = os.getcwd() + "/" 
 sys.path.insert(0, paths + "/src")
-from EDA import eda
+from calculator import calculator
 
 def main(targets):
   
