@@ -69,7 +69,10 @@ def calculate_risk(t, IR = inhalation_rate[activity]):
 
 #Calculate maximum people allowed in the room given an exposure time (hours)
 #steady state model
-def calc_n_max_ss(exp_time, max_aerosol_radius, room_area, room_height,air_exch_rate, ERq, mask): #exp time in hrs
+def calc_n_max_ss(exp_time, ax_aerosol_radius, room_area,room_height, air_exch_rate,IR,Dc,DV,mask): #exp time in hrs
+    cv = 100
+    ci = 1* 10 **(max(range(5, 10)))
+    ERq = get_quanta_emmission_rate(cv, ci, IR, Dc, Dv)
     room_vol = room_height * room_area
     room_vol_m = room_vol*0.0283168
     mean_ceiling_height_m = room_height*0.3048
@@ -87,7 +90,10 @@ def calc_n_max_ss(exp_time, max_aerosol_radius, room_area, room_height,air_exch_
     return n_max
 
 #transient model
-def calc_n_max_t(exp_time, max_aerosol_radius, room_area,room_height, air_exch_rate, ERq,mask): #exp time in hrs
+def calc_n_max_t(exp_time,max_aerosol_radius, room_area,room_height, air_exch_rate,IR,Dc,DV,mask): #exp time in hrs
+    cv = 100
+    ci = 1* 10 **(max(range(5, 10)))
+    ERq = get_quanta_emmission_rate(cv, ci, IR, Dc, Dv)
     eff_aerosol_radius = ((0.4 / (1 - 0.4)) ** (1 / 3)) * max_aerosol_radius
     room_vol = room_height * room_area
     room_vol_m = room_vol*0.0283168
@@ -105,7 +111,10 @@ def calc_n_max_t(exp_time, max_aerosol_radius, room_area,room_height, air_exch_r
     return n_max
 
 #Calculate maximum exposure time allowed given a capacity (# people):
-def calc_max_time(n_max, max_aerosol_radius, room_area,room_height, air_exch_rate, ERq,mask):
+def calc_max_time(n_max, max_aerosol_radius, room_area,room_height, air_exch_rate,IR,Dc,DV,mask):
+    cv = 100
+    ci = 1* 10 **(max(range(5, 10)))
+    ERq = get_quanta_emmission_rate(cv, ci, IR, Dc, Dv)
     room_vol = room_height * room_area
     room_vol_m = room_vol*0.0283168
     mean_ceiling_height_m = room_height*0.3048
