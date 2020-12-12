@@ -70,20 +70,20 @@ def calculate_risk(t, IR = inhalation_rate[activity]):
 #Calculate maximum people allowed in the room given an exposure time (hours)
 #steady state model
 def calc_n_max_ss(exp_time): #exp time in hrs
-    #risk_tolerance = risk_tolerance  
-    n_max = 1 + risk_tolerance / (airb_trans_rate * exp_time)
-    return n_max
   
+    n_max = 1 + 0.1 / (airb_trans_rate * exp_time)
+    return n_max
+
 #transient model
 def calc_n_max_t(exp_time): #exp time in hrs
     risk_tolerance = risk_tolerance 
-    n_max = 1 + (risk_tolerance * (1 + 1/(conc_relax_rate * exp_time)) / (airb_trans_rate * exp_time))
+    n_max = 1 + (0.1 * (1 + 1/(conc_relax_rate * exp_time)) / (airb_trans_rate * exp_time))
     return n_max
 
 #Calculate maximum exposure time allowed given a capacity (# people):
 def calc_max_time(n_max):
     #risk_tolerance = risk_tolerance
 
-    exp_time_ss = risk_tolerance / ((n_max - 1) * airb_trans_rate)  # hrs, steady-state
+    exp_time_ss = 0.1 / ((n_max - 1) * airb_trans_rate)  # hrs, steady-state
     exp_time_trans = exp_time_ss * (1 + (1 + 4 / (conc_relax_rate * exp_time_ss)) ** 0.5) / 2  # hrs, transient
     return exp_time_trans
