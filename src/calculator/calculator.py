@@ -8,50 +8,63 @@ from IPython.display import Image
 import pandas as pd
 from scipy.integrate import quad
 
+MINUTES_IN_HOUR = 60
+SECONDS_IN_MINUTE = 60
+SECONDS_IN_HOUR = 3600
+FEET_TO_METERS = 0.3048
+SQ_FT_TO_SQ_M = 0.092903
+CUBIC_FT_TO_METERS = 0.0283168
+CUBIC_CM_TO_METERS = 1e-6
+CUBIC_μM_TO_CUBIC_CM = 1e-12
+CUBIC_M_TO_ML = 1e6
+
+
+assumptions = json.load('./config/assumptions.json') 
+#Used to generate values with normal distribution
+#Helper Functions
+
 #Used to generate values with normal distribution
 def get_truncated_normal(mean=0, sd=1, low=0, upp=10):
     return truncnorm(
         (low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
-  
-def get_air_changes_per_hour(cfm, room_volume):
-  if str(cfm) == 'nan':
-      #impute unknown cfm with arbitrary cfm
-      print('VAV unknown. Imputed with arbitrary VAV of 800 CFM')
-      cfm = 800
-  return (cfm * 60) / room_volume
 
-#In the future generating occupants may be useful in simulating a indoor environment more accurately
-def generate_occupants(n_occupants, n_infected, speaker_to_breathing_ratio, masks_efficacy = mask_efficacy):
-    occupants = {}
-    #Age input. If not age is inputted an age distribution should be generated for the region. 
-    #Default age distribution is an empirical age distribution for a UCSD Classroom. 
-    #Source: https://ir.ucsd.edu/_files/stats-data/profile/profile-2018-2019.pdf
-    occupant_age = np.random.choice([18, 19, 20, 21, 22, 23, 24, random.randint(25, 30)], size = n_occupants, p = [.198, .195, .195, .1875, .09375, .046875, .023875, .06])
-    for i in range(n_occupants):
-        curr_occ = "occ" + str(i)
-        occupants[curr_occ] = {}
-        occupants[curr_occ]['age'] = occupant_age[i]
-        #Here we must change respiratory function to reflect exercise
-        #Normal breathing/speaking/singing concentrations
-        #Concentration from breathing Standard: 0.1 Range: 0.06–1.0 cubic centimeters Distribution: Normal
-        #Source:
-        normal_breathing = get_truncated_normal(mean=.1, sd=.02, low=.06, upp=1)
-        occupants[curr_occ]['conc_breathing'] = normal_breathing.rvs() * CUBIC_CM_TO_METERS
-        #Concentration from speaking (singing) Standard: 1.1 Range: 0.06–6.0 cubic centimeters Distribution: Normal
-        #Source:
-        normal_speaking = get_truncated_normal(mean=1.1, sd=.02, low=.06, upp=6)
-        occupants[curr_occ]['conc_speaking'] = normal_speaking.rvs() * CUBIC_CM_TO_METERS
-        #Respiratory rate standard: 10 Range: 5–20 L/min Distribution: Normal
-        #Source:
-        normal_respiratory_rate = get_truncated_normal(mean= 10, sd=5, low=5, upp=20)
-        occupants[curr_occ]['norm_resp_rate'] = normal_respiratory_rate.rvs()
-        occupants[curr_occ]['mask_efficacy'] = masks_efficacy
-        occupants[curr_occ]['testedWeekly'] = True
-    return occupants
-  
-  
-#Calculate emission rates
-def get_quanta_emmission_rate(cv, ci, IR, Dc, Dv = droplet_vol):
+def get_air_changes_per_hour(cfm, room_volume):
+    if str(cfm) == 'nan':
+        #impute unknown cfm with arbitrary cfm
+        print('VAV unknown. Imputed with arbitrary VAV of 800 CFM')
+        cfm = 800
+    return (cfm * 60) / room_volume
+
+def get_room_data(filepath):
+    CUBIC_FT_TO_METERS = 1e-6
+    room_table = pd.read_csv(filepath)
+    room_dic = {}
+    #Room Area in square ft.
+    room_dic['room_area'] = room_table.loc[room_table['Room'] == room_id]['Area'].item()
+    
+    #Room Height. Average room height of 10 ft is chosen if nan
+    room_hght = room_table.loc[room_table['Room'] == room_id]['Height'].item()
+    if room_hght == 'nan':
+        print(room_id + ' Room height not found. Average room height of 10 ft imputed')
+        room_hght = 10
+    room_dic['room_hght'] = room_hght
+    
+    #CFM range. If no CFM is provided min is chosen by default
+    room_dic['cfm_range'] = list(map(int, room_table.loc[room_table['Room'] == room_id]['VAV'].item().split(',')))
+    
+    #Windows
+    room_dic['windows'] = room_table.loc[room_table['Room'] == room_id]['Windows'].item()
+    
+    #V is volume of room
+    room_dic['room_volume'] = room_dic['room_area'] * room_hght
+    #Unit Conversion
+    room_dic['room_volume_m'] = room_dic['room_area'] * room_hght * CUBIC_FT_TO_METERS
+    
+    return room_dic
+
+droplet_vol =  {'.8μm': 0.26808257310632905, '1.8μm': 3.053628059289279, '3.5μm': 22.44929750377706, '5.5μm': 87.11374629016697}
+
+def get_quanta_emmission_rate(cv, ci, IR, Dc = var[', Dv = var['droplet_vol']):
     #Convert droplet volume from cubic micrometers to centimeters
     summation = sum([Dc['.8μm'] * (Dv['.8μm'] * CUBIC_μM_TO_CUBIC_CM),
                      Dc['1.8μm'] * (Dv['1.8μm'] * CUBIC_μM_TO_CUBIC_CM),
@@ -59,13 +72,44 @@ def get_quanta_emmission_rate(cv, ci, IR, Dc, Dv = droplet_vol):
                      Dc['5.5μm'] * (Dv['5.5μm'] * CUBIC_μM_TO_CUBIC_CM)])
     #Convert IR from cubic meters to mililiter
     return cv * ci * (IR * CUBIC_M_TO_ML) * summation
-  
-def quanta_concentration(t, I = n_infected, ERq = ERq, IVRR = ivrr, V = room_volume_m, n0 = initial_quanta):
-  return ((ERq * I) / (IVRR * V)) + (n0 + ((ERq * I) / IVRR)) * ((np.e**(-IVRR * t)) / V)
+                                                 
+def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, var = assumptions, room_data_path = 'data/room_data.csv', cfm = False):
+    CUBIC_μM_TO_CUBIC_CM = 1e-12
+    ERq = get_quanta_emmission_rate(var['cv'], var['ci'], var['IR'][activity], var['droplet_conc'][expiratory_activity], var['droplet_vol'])
+    
+    room_dic = get_room_data(room_data_path)
+    cfm_range = room_dic['cfm_range']
+    if cfm == False:
+        cfm = min(cfm_range)
+    elif (cfm > max(cfm_range)) | ((cfm < min(cfm_range))):
+        print('User input error: CFM out of CFM range. Minimum CFM chosen')
+        cfm = min(cfm_range)
+    elif cfm == 'nan':
+        print(room_id + ' VAV CFM rate not found. Average CFM imputed')
+        cfm = 1200
+    #Air Changes per Hour
+    air_change_rate = get_air_changes_per_hour(cfm, room_dic['room_volume'])
 
-def calculate_risk(t, IR = inhalation_rate[activity]):
-  ans, err = quad(quanta_concentration, 0, t)
-  return 1 - np.e**(-IR * ans)
+    ##To calculate infection rate we will aggregate the past week of testing for UC San Diego (last updated: 12/10/20)
+    #Source: https://returntolearn.ucsd.edu/dashboard/index.html
+    infection_rate = (2 + 11 + 10+ 3 + 7 + 10 + 12 + 5)/(20 + 1385 + 1375 + 286 + 1332 + 1414 + 944 + 1244)
+    n_infected = infection_rate * n_occupants
+    if n_infected < 1:
+        n_infected = 1
+    #Infectious virus removal rate
+    ivrr = air_change_rate + var['deposition_rate'] + var['viral_inactivation']
+    
+    def quanta_concentration(t, I = n_infected, ERq = ERq, IVRR = ivrr, V = room_dic['room_volume_m'], n0 = var['initial_quanta']):
+        return ((ERq * I) / (IVRR * V)) + (n0 + ((ERq * I) / IVRR)) * ((np.e**(-IVRR * t)) / V)
+
+    ans, err = quad(quanta_concentration, 0, t)
+    
+    risk = 1 - np.e**(-var['IR'][activity] * ans)
+    
+    print('The resulting risk of infection is ' + str(risk * 100) +'%')
+    print('It is predicted that ' + str(risk) + ' x ' + str(n_occupants) + ' = ' + str(risk * n_occupants) + ' susceptible occupants will be infected')
+    
+    return risk
 
 #Calculate maximum people allowed in the room given an exposure time (hours)
 #steady state model

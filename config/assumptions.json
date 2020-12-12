@@ -1,5 +1,32 @@
-assumptions = {"wet_asl_d": 5,
-                   "virus_life": 1.7,
-                   "hi_viral_load": 500000000,
-                   "si_viral_load": 5000000000,
-                   "deposition_prob": 0.5}
+assumptions = {
+                "wet_asl_d": 5,
+                "virus_life": 1.7,
+                "hi_viral_load": 500000000,
+                "si_viral_load": 5000000000,
+                "deposition_prob": 0.5,
+                'cv': 1e9,
+                'ci': .02,
+                'IR': {'resting': .49,
+                       'standing': .54,
+                       'light_exercise': 1.38,
+                       'moderate_exercise': 2.35,
+                       'heavy_exercise': 3.30},
+                'droplet_conc': {
+                                    'speaking': {'.8μm': 0.4935,'1.8μm': 0.1035, '3.5μm': 0.073, '5.5μm': 0.035},
+                                    'low_speaking':  
+                                                {'.8μm': .236, '1.8μm': .068, '3.5μm': .007, '5.5μm': .011},
+                                    'whispering':
+                                                {'.8μm': .110, '1.8μm': .014, '3.5μm': .004, '5.5μm': .002},
+                                    'singing':
+                                                {'.8μm': .751, '1.8μm': .139, '3.5μm': .139, '5.5μm': .059},
+                                    'breathing':
+                                                {'.8μm': .084, '1.8μm': .009, '3.5μm': .003, '5.5μm': .002},  
+                        },
+
+                'droplet_vol': {'.8μm': 0.26808257310632905, '1.8μm': 3.053628059289279, '3.5μm': 22.44929750377706, '5.5μm': 87.11374629016697},
+                'pass_vent_rate' : .35,
+                'deposition_rate' : .24,
+                'viral_inactivation' : .63,
+                'initial_quanta' : 0,
+                'viral_load_sptm' : 1000000000,
+}
