@@ -18,7 +18,39 @@ CUBIC_CM_TO_METERS = 1e-6
 CUBIC_μM_TO_CUBIC_CM = 1e-12
 CUBIC_M_TO_ML = 1e6
 
-
+var = {
+"wet_asl_d": 5,
+"virus_life": 1.7,
+"hi_viral_load": 500000000,
+"si_viral_load": 5000000000,
+"deposition_prob": 0.5,
+"cv": 1e9,
+"ci": 0.02,
+"IR": {"resting": 0.49,
+       "standing": 0.54,
+       "light_exercise": 1.38,
+       "moderate_exercise": 2.35,
+       "heavy_exercise": 3.30},
+"droplet_conc": {
+                "speaking": {".8μm": 0.4935,"1.8μm": 0.1035, "3.5μm": 0.073, "5.5μm": 0.035},
+                "counting":  
+                            {".8μm": 0.236, "1.8μm": 0.068, "3.5μm": 0.007, "5.5μm": 0.011},
+                "whispering":
+                            {".8μm": 0.110, "1.8μm": 0.014, "3.5μm": 0.004, "5.5μm": 0.002},
+                "singing":
+                            {".8μm": 0.751, "1.8μm": 0.139, "3.5μm": 0.139, "5.5μm": 0.059},
+                "breathing":
+                            {".8μm": 0.084, "1.8μm": 0.009, "3.5μm": 0.003, "5.5μm": 0.002}},
+    
+"droplet_vol": {".8μm": 0.26808257310632905, "1.8μm": 3.053628059289279, "3.5μm": 22.44929750377706, "5.5μm": 87.11374629016697},
+"pass_vent_rate" : 0.35,
+"deposition_rate" : 0.24,
+    
+    
+"viral_inactivation" : 0.63,
+"initial_quanta" : 0,
+"viral_load_sptm" : 1000000000
+}
 
 #Used to generate values with normal distribution
 
@@ -60,7 +92,7 @@ def get_room_data(filepath, room_id):
     
     return room_dic
 
-def get_quanta_emmission_rate(var, activity, expiratory_activity):
+def get_quanta_emmission_rate(activity, expiratory_activity, var = var):
     CUBIC_μM_TO_CUBIC_CM = 1e-12
     CUBIC_M_TO_ML = 1e6
     Dc = var['droplet_conc'][expiratory_activity]
@@ -74,9 +106,9 @@ def get_quanta_emmission_rate(var, activity, expiratory_activity):
     return var['cv'] * var['ci'] * (var['IR'][activity] * CUBIC_M_TO_ML) * summation
       
 #Infection Risk Calculator
-def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, var, room_data_path, cfm = False):
+def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, var = var, room_data_path = "rm.csv", cfm = False):
     CUBIC_μM_TO_CUBIC_CM = 1e-12
-    ERq = get_quanta_emmission_rate(var, activity, expiratory_activity)
+    ERq = get_quanta_emmission_rate(activity, expiratory_activity)
     room_dic = get_room_data(room_data_path, room_id)
     cfm_range = room_dic['cfm_range']
     if cfm == False:
