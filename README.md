@@ -5,21 +5,13 @@ In this project, We propose an infection risk algorithm which accepts building d
 
 
 ## Opening up the project
+The source codes for the calculator are located in /src/calculator. 
+To see the notebook containing the underlying logic and sample runnings for the calculator, open calculator_walkthrough in /notebooks. 
+To use run.py in command line, input python run.py [targets]. 
+We currently have the following targets available: 
+More information of those sample runs can be found in the calculator walkthrough notebooks mentioned above. 
 
 ### Responsibilities
-
-Source codes are located in /src/. 
-
-To see the notebook containing the example EDA process, open Checkpoint_2_EDA in /notebooks.
-
-To use run.py, create a notebook at the root directory and import it, then input main(target), 
-where target is a list of targets. Example run is: run.main(["eda_co2", "eda_humidity", "eda_light"]). If you want to run it in command line, input python run.py [targets].  
-We currently have the following targets available: "eda_co2", "eda_humidity", "eda_light" and "data". Those "eda_(sensors_types)" targets gives visualization of correlation between PIR sensors and input sensors, and returns a dataframes containing the correlation in each rooms. The "data" simply print string "Data is already cleaned in checkpoint 2" because it's already cleaned by the author. More information about EDA can be found in the EDA notebooks mentioned above. 
-
-
-
-### Responsibilities:
-
-* Etienne Doidic worked on the report and project structure.
-* Nicholas Kho cleaned data and created graphs and notebooks, helped with EDA. 
-* Zhexu Li developed correlation calculations, developed source codes and updated most of the notebook. 
+* Etienne Doidic built the structure and underlying logic of the calculator, and also the notebooks for walk through. 
+* Nicholas Kho helped developing the calculator and migrated the codes to src. 
+* Zhexu Li helped migrating the codes and updated the project structure. 
