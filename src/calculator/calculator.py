@@ -19,14 +19,10 @@ CUBIC_μM_TO_CUBIC_CM = 1e-12
 CUBIC_M_TO_ML = 1e6
 
 
-assumptions = json.load('./config/assumptions.json') 
-#Used to generate values with normal distribution
-#Helper Functions
 
 #Used to generate values with normal distribution
-def get_truncated_normal(mean=0, sd=1, low=0, upp=10):
-    return truncnorm(
-        (low - mean) / sd, (upp - mean) / sd, loc=mean, scale=sd)
+
+#Helper Functions
 
 def get_air_changes_per_hour(cfm, room_volume):
     if str(cfm) == 'nan':
@@ -35,17 +31,19 @@ def get_air_changes_per_hour(cfm, room_volume):
         cfm = 800
     return (cfm * 60) / room_volume
 
-def get_room_data(filepath):
-    CUBIC_FT_TO_METERS = 1e-6
+def get_room_data(filepath, room_id):
+    CUBIC_FT_TO_METERS = 0.0283168
     room_table = pd.read_csv(filepath)
     room_dic = {}
+    if len(room_table.loc[room_table['Room'] == room_id]) == 0:
+        return print("User input error: Room " + room_id + " not found.")
+    room_table.loc[room_table['Room'] == room_id]['Area']
     #Room Area in square ft.
     room_dic['room_area'] = room_table.loc[room_table['Room'] == room_id]['Area'].item()
-    
     #Room Height. Average room height of 10 ft is chosen if nan
     room_hght = room_table.loc[room_table['Room'] == room_id]['Height'].item()
     if room_hght == 'nan':
-        print(room_id + ' Room height not found. Average room height of 10 ft imputed')
+        print(room_id + 'Room height not found. Average room height of 10 ft imputed.')
         room_hght = 10
     room_dic['room_hght'] = room_hght
     
@@ -62,34 +60,36 @@ def get_room_data(filepath):
     
     return room_dic
 
-droplet_vol =  {'.8μm': 0.26808257310632905, '1.8μm': 3.053628059289279, '3.5μm': 22.44929750377706, '5.5μm': 87.11374629016697}
-
-def get_quanta_emmission_rate(cv, ci, IR, Dc = var[', Dv = var['droplet_vol']):
+def get_quanta_emmission_rate(var, activity, expiratory_activity):
+    CUBIC_μM_TO_CUBIC_CM = 1e-12
+    CUBIC_M_TO_ML = 1e6
+    Dc = var['droplet_conc'][expiratory_activity]
+    Dv = var['droplet_vol']
     #Convert droplet volume from cubic micrometers to centimeters
     summation = sum([Dc['.8μm'] * (Dv['.8μm'] * CUBIC_μM_TO_CUBIC_CM),
                      Dc['1.8μm'] * (Dv['1.8μm'] * CUBIC_μM_TO_CUBIC_CM),
                      Dc['3.5μm'] * (Dv['3.5μm'] * CUBIC_μM_TO_CUBIC_CM),
                      Dc['5.5μm'] * (Dv['5.5μm'] * CUBIC_μM_TO_CUBIC_CM)])
     #Convert IR from cubic meters to mililiter
-    return cv * ci * (IR * CUBIC_M_TO_ML) * summation
-                                                 
-def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, var = assumptions, room_data_path = 'data/room_data.csv', cfm = False):
+    return var['cv'] * var['ci'] * (var['IR'][activity] * CUBIC_M_TO_ML) * summation
+      
+#Infection Risk Calculator
+def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, var, room_data_path, cfm = False):
     CUBIC_μM_TO_CUBIC_CM = 1e-12
-    ERq = get_quanta_emmission_rate(var['cv'], var['ci'], var['IR'][activity], var['droplet_conc'][expiratory_activity], var['droplet_vol'])
-    
-    room_dic = get_room_data(room_data_path)
+    ERq = get_quanta_emmission_rate(var, activity, expiratory_activity)
+    room_dic = get_room_data(room_data_path, room_id)
     cfm_range = room_dic['cfm_range']
     if cfm == False:
         cfm = min(cfm_range)
     elif (cfm > max(cfm_range)) | ((cfm < min(cfm_range))):
-        print('User input error: CFM out of CFM range. Minimum CFM chosen')
+        print('User input error: CFM out of CFM range. Minimum CFM chosen instead.')
         cfm = min(cfm_range)
     elif cfm == 'nan':
-        print(room_id + ' VAV CFM rate not found. Average CFM imputed')
+        print(room_id + ' VAV CFM rate not found. Average CFM imputed.')
         cfm = 1200
     #Air Changes per Hour
     air_change_rate = get_air_changes_per_hour(cfm, room_dic['room_volume'])
-
+    
     ##To calculate infection rate we will aggregate the past week of testing for UC San Diego (last updated: 12/10/20)
     #Source: https://returntolearn.ucsd.edu/dashboard/index.html
     infection_rate = (2 + 11 + 10+ 3 + 7 + 10 + 12 + 5)/(20 + 1385 + 1375 + 286 + 1332 + 1414 + 944 + 1244)
