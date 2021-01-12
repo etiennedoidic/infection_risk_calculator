@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<meta http-equiv="X-UA-Compatible" content="ie=edge" />
+	<title>UC San Diego Airborne Infection Risk Calculator</title>
+	<link href="./styles/dashboard.css" rel="stylesheet" />
+	<script src="./Scripts/main.js"></script>
+</head>
+<main style="background-color: #07add6;">
+	<summary>Event Information</summary>
+	<form class="pure-form">
+		<fieldset>
+			<label for ="rid">Room ID</label>
+			<input type = "text" id = "rid" >
+		</fieldset>
+
+		<fieldset>
+			<label for ="nocc">Number of Occupants</label>
+			<input type = "number" id = "nocc" placeholder = 0 min = 1>
+		</fieldset>	
+		<fieldset>
+			<label for = "act">Acitivity</label>
+			<br/>
+			<select id = "act" required>
+				<datalist id = "pay">
+					<option>Lecture</option>
+					<option>Studying</option>
+					<option>Singing</option>
+					<option>Talking</option>
+					<option>Exercising</option>
+				</datalist>
+			</select>
+		<fieldset>
+			<button id = "cancelbtn" type = "reset" class="button-error pure-button">Reset</button>
+			<button id = "orderbtn" type ="button" class="button-success pure-button" disabled = "true">Go</button>   
+		</fieldset>   
+	</form>
+</main>
+</html>
