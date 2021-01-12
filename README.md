@@ -20,5 +20,5 @@ More information about those sample runs can be found in the report notebooks me
 
 ### Responsibilities
 * Etienne Doidic built the structure and underlying logic of the calculator, and also the notebooks for walk through. 
-* Nicholas Kho helped developing the calculator and migrated the codes to src. 
+* Nicholas Kho helped developing the calculator and migrated the codes to src and project structure. 
 * Zhexu Li helped migrating the codes, updated the project structure and developed configs and run.py. 
