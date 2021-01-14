@@ -83,13 +83,19 @@ def get_room_data(filepath, room_id):
     room_dic['room_area'] = room_table.loc[room_table['Room'] == room_id]['Area'].item()
     #Room Height. Average room height of 10 ft is chosen if nan
     room_hght = room_table.loc[room_table['Room'] == room_id]['Height'].item()
-    if room_hght == 'nan':
-        print(room_id + 'Room height not found. Average room height of 10 ft imputed.')
+    if np.isnan(room_hght):
+        print(room_id + ' Room height not found. Average room height of 10 ft imputed.')
         room_hght = 10
     room_dic['room_hght'] = room_hght
     
     #CFM range. If no CFM is provided min is chosen by default
-    room_dic['cfm_range'] = list(map(int, room_table.loc[room_table['Room'] == room_id]['VAV'].item().split(',')))
+    cfm_range = room_table.loc[room_table['Room'] == room_id]['VAV'].item()
+    if isinstance(cfm_range, float):
+        ca_requirement_cfm = .53 * room_dic['room_area']
+        room_dic['cfm_range'] = [ca_requirement_cfm, ca_requirement_cfm]
+        print(room_id + ' CFM rate not found. California minimum ventilation requirement imputed')
+    else:
+        room_dic['cfm_range'] = list(map(int, cfm_range.split(',')))
     
     #Windows
     room_dic['windows'] = room_table.loc[room_table['Room'] == room_id]['Windows'].item()
@@ -129,8 +135,8 @@ def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, room_
         print('User input error: CFM out of CFM range. Minimum CFM chosen instead.')
         cfm = min(cfm_range)
     elif cfm == 'nan':
-        print(room_id + ' VAV CFM rate not found. Average CFM imputed.')
-        cfm = 1200
+        print(room_id + ' VAV CFM rate not found. California Minimum CFM requirement imputed.')
+        cfm = .53 * room_dic['room_area']
     #Air Changes per Hour
     air_change_rate = get_air_changes_per_hour(cfm, room_dic['room_volume'])
     
