@@ -153,6 +153,47 @@ def infection_risk(t, room_id, n_occupants, activity, expiratory_activity, room_
     
     return risk
 
+#For user interface
+def ui_calc(activity_dropdown, room_input, time_input, occupant_input, rid_path):
+    #Given the user inputted activity we must assume inhalation rate and expiratory activities in 
+    #order to accurately provide a quantum emmission rate.
+    if activity_dropdown == 'Lecture':
+        #Simulate lecture with average of resting/whispering and speaking/standing
+        #perhaps make this information available to users by providing  a drop down that allows user to 
+        #choose ratio of two actions/exp_actions during the events
+        act1 = 'resting'
+        act2 = 'standing'
+        #The expiratory action is assumed to be 
+        exp_act1 = 'whispering'
+        exp_act2 = 'speaking'
+        ir1 = infection_risk(time_input, room_input, occupant_input, act1, exp_act1, rid_path)
+        ir2 = infection_risk(time_input, room_input, occupant_input, act2, exp_act2, rid_path)
+        total_ir  = (ir1 + ir2) / 2
+    if activity_dropdown == 'Studying':
+        #Simulate studying with average of resting/whispering and speaking/standing
+        act1 = 'resting'
+        act2 = 'standing'
+        exp_act1 = 'speaking'
+        exp_act2 = 'whispering'
+        ir1 = infection_risk(time_input, room_input, occupant_input, act1, exp_act1, rid_path)
+        ir2 = infection_risk(time_input, room_input, occupant_input, act2, exp_act2, rid_path)
+        total_ir  = (ir1 + ir2) / 2
+    if activity_dropdown == 'Singing':
+        #Simulate singing by assuming occupants are singing and standing
+        act1 = 'standing'
+        exp_act1 = 'singing'
+        total_ir = infection_risk(time_input, room_input, occupant_input, act1, exp_act1, rid_path)
+    if activity_dropdown == 'Social Event':
+        #Simulate singing by assuming occupants are doing light exercise and talking
+        act1 = 'light_exercise'
+        exp_act1 = 'speaking'
+        total_ir = infection_risk(time_input, room_input, occupant_input, act1, exp_act1, rid_path)
+    if activity_dropdown == 'Exercising':
+        #Simulate singing by assuming occupants are doing heavy exercise and talking
+        act1 = 'heavy_exercise'
+        exp_act1 = 'speaking'
+        total_ir = infection_risk(time_input, room_input, occupant_input, act1, exp_act1, rid_path)
+    return total_ir
 
 
 
